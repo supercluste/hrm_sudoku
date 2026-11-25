@@ -1,0 +1,30 @@
+{
+  "checkpoint": "checkpoints/baseline_bs128_step_1500.pt",
+  "step": 1500,
+  "h_cycles": 2,
+  "l_cycles": 2,
+  "h_layers": 4,
+  "l_layers": 4,
+  "hidden_size": 512,
+  "halt_max_steps": 16,
+  "train_args": {
+    "steps": 1500,
+    "batch_size": 128,
+    "save_every": 500,
+    "warmup_steps": 200,
+    "h_cycles": 2,
+    "l_cycles": 2,
+    "seed": 42,
+    "resume": null,
+    "run_name": "baseline_bs128"
+  },
+  "test_puzzles": 3200,
+  "cell_accuracy": 52.13,
+  "exact_accuracy": 0.0,
+  "q_halt_accuracy": 100.0,
+  "avg_steps": 16.0,
+  "avg_q_predicted_steps": 16.0,
+  "early_halt_pct": 0.0,
+  "avg_lm_loss": 1.1455,
+  "eval_time_sec": 34.49
+}
