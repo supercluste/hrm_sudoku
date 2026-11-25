@@ -1,6 +1,7 @@
 
 import argparse
 import os
+import time
 
 import torch
 
@@ -30,11 +31,9 @@ def metric_value(value):
     return value
 
 
-def get_lr(step, base_lr, warmup_steps=2000):
+def get_lr(step, base_lr, warmup_steps):
     """
-    Official schedule:
-    - Linear warmup for 2000 steps.
-    - Constant learning rate afterwards (lr_min_ratio = 1.0).
+    Linear warmup then constant learning rate.
     """
     if step < warmup_steps:
         return base_lr * (step + 1) / warmup_steps
@@ -47,6 +46,14 @@ def main():
     parser.add_argument("--steps", type=int, default=500)
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--save-every", type=int, default=100)
+    parser.add_argument("--warmup-steps", type=int, default=100)
+    parser.add_argument("--h-cycles", type=int, default=2)
+    parser.add_argument("--l-cycles", type=int, default=2)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--resume", type=str, default=None,
+                        help="Path to checkpoint to resume from")
+    parser.add_argument("--run-name", type=str, default=None,
+                        help="Name for this run (used in checkpoint filenames)")
     args = parser.parse_args()
 
     if not torch.cuda.is_available():
@@ -56,27 +63,41 @@ def main():
     batch_size = args.batch_size
 
     # --------------------------------------------------
-    # Official HRM architecture configuration
+    # Determine configuration
     # --------------------------------------------------
 
-    config = HierarchicalReasoningModel_ACTV1Config(
-        batch_size=batch_size,
-        seq_len=81,
-        puzzle_emb_ndim=512,
-        num_puzzle_identifiers=1,
-        vocab_size=11,
-        H_cycles=2,
-        L_cycles=2,
-        H_layers=4,
-        L_layers=4,
-        hidden_size=512,
-        expansion=4,
-        num_heads=8,
-        pos_encodings="rope",
-        halt_max_steps=16,
-        halt_exploration_prob=0.1,
-        forward_dtype="bfloat16",
-    )
+    start_step = 0
+
+    if args.resume:
+        print(f"Resuming from checkpoint: {args.resume}")
+        checkpoint = torch.load(args.resume, map_location=device, weights_only=False)
+        config = HierarchicalReasoningModel_ACTV1Config(**checkpoint["config"])
+        start_step = checkpoint["step"]
+        print(f"  Resuming from step {start_step}")
+        print(f"  Config from checkpoint: H_cycles={config.H_cycles}, L_cycles={config.L_cycles}")
+    else:
+        config = HierarchicalReasoningModel_ACTV1Config(
+            batch_size=batch_size,
+            seq_len=81,
+            puzzle_emb_ndim=512,
+            num_puzzle_identifiers=1,
+            vocab_size=11,
+            H_cycles=args.h_cycles,
+            L_cycles=args.l_cycles,
+            H_layers=4,
+            L_layers=4,
+            hidden_size=512,
+            expansion=4,
+            num_heads=8,
+            pos_encodings="rope",
+            halt_max_steps=16,
+            halt_exploration_prob=0.1,
+            forward_dtype="bfloat16",
+        )
+
+    # --------------------------------------------------
+    # Model
+    # --------------------------------------------------
 
     base_model = HierarchicalReasoningModel_ACTV1(
         config.model_dump()
@@ -91,23 +112,6 @@ def main():
         base_model,
         loss_type="stablemax_cross_entropy",
     ).to(device)
-
-    # --------------------------------------------------
-    # Official Sudoku dataset loader
-    # --------------------------------------------------
-
-    dataset_config = PuzzleDatasetConfig(
-        seed=42,
-        dataset_path="data/sudoku",
-        global_batch_size=batch_size,
-        test_set_mode=False,
-        epochs_per_iter=1,
-        rank=0,
-        num_replicas=1,
-    )
-
-    dataset = PuzzleDataset(dataset_config, split="train")
-    iterator = iter(dataset)
 
     # --------------------------------------------------
     # Optimizers
@@ -132,17 +136,62 @@ def main():
     )
 
     # --------------------------------------------------
+    # Resume state
+    # --------------------------------------------------
+
+    if args.resume:
+        model.load_state_dict(checkpoint["model"])
+        main_optimizer.load_state_dict(checkpoint["main_optimizer"])
+        puzzle_optimizer.load_state_dict(checkpoint["puzzle_optimizer"])
+        print(f"  Model and optimizer states restored.")
+        del checkpoint
+
+    # --------------------------------------------------
+    # Dataset
+    # --------------------------------------------------
+
+    dataset_config = PuzzleDatasetConfig(
+        seed=args.seed,
+        dataset_path="data/sudoku",
+        global_batch_size=batch_size,
+        test_set_mode=False,
+        epochs_per_iter=1,
+        rank=0,
+        num_replicas=1,
+    )
+
+    dataset = PuzzleDataset(dataset_config, split="train")
+    iterator = iter(dataset)
+
+    # --------------------------------------------------
     # Training
     # --------------------------------------------------
 
-    warmup_steps = 2000
+    warmup_steps = args.warmup_steps
 
     model.train()
     carry = None
 
     os.makedirs("checkpoints", exist_ok=True)
 
-    for step in range(1, args.steps + 1):
+    # Determine run name for checkpoint files.
+    run_name = args.run_name
+    if run_name is None:
+        run_name = f"H{config.H_cycles}_L{config.L_cycles}"
+
+    total_steps = start_step + args.steps
+
+    print(f"\nTraining config:")
+    print(f"  H_cycles={config.H_cycles}, L_cycles={config.L_cycles}")
+    print(f"  batch_size={batch_size}, warmup={warmup_steps}")
+    print(f"  steps={start_step + 1}..{total_steps}")
+    print(f"  run_name={run_name}")
+    print(f"  seed={args.seed}")
+    print()
+
+    t_start = time.time()
+
+    for step in range(start_step + 1, total_steps + 1):
 
         # Get next training batch.
         try:
@@ -195,19 +244,23 @@ def main():
         # Logging
         # --------------------------------------------------
 
-        if step == 1 or step % 10 == 0:
+        if step == start_step + 1 or step % 10 == 0:
 
             values = {
                 k: metric_value(v)
                 for k, v in metrics.items()
             }
 
+            elapsed = time.time() - t_start
+            steps_done = step - start_step
+            steps_per_sec = steps_done / elapsed if elapsed > 0 else 0
+
             print(
-                f"Step {step}/{args.steps} | "
+                f"Step {step}/{total_steps} | "
                 f"Loss: {loss.item():.4f} | "
                 f"Metrics: {values} | "
                 f"LR: {main_lr:.2e} | "
-                f"Puzzle LR: {puzzle_lr:.2e}",
+                f"Speed: {steps_per_sec:.2f} steps/s",
                 flush=True,
             )
 
@@ -215,9 +268,9 @@ def main():
         # Checkpointing
         # --------------------------------------------------
 
-        if step % args.save_every == 0 or step == args.steps:
+        if step % args.save_every == 0 or step == total_steps:
 
-            path = f"checkpoints/hrm_step_{step}.pt"
+            path = f"checkpoints/{run_name}_step_{step}.pt"
 
             torch.save(
                 {
@@ -226,6 +279,7 @@ def main():
                     "main_optimizer": main_optimizer.state_dict(),
                     "puzzle_optimizer": puzzle_optimizer.state_dict(),
                     "config": config.model_dump(),
+                    "args": vars(args),
                 },
                 path,
             )
@@ -235,7 +289,8 @@ def main():
                 flush=True,
             )
 
-    print("\nTRAINING FINISHED")
+    elapsed = time.time() - t_start
+    print(f"\nTRAINING FINISHED in {elapsed:.1f}s ({elapsed/60:.1f}min)")
 
     print(
         "GPU memory (MB):",

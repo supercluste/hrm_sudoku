@@ -1,0 +1,30 @@
+{
+  "checkpoint": "checkpoints/reduced_h_step_5000.pt",
+  "step": 5000,
+  "h_cycles": 1,
+  "l_cycles": 2,
+  "h_layers": 4,
+  "l_layers": 4,
+  "hidden_size": 512,
+  "halt_max_steps": 16,
+  "train_args": {
+    "steps": 5000,
+    "batch_size": 4,
+    "save_every": 5000,
+    "warmup_steps": 200,
+    "h_cycles": 1,
+    "l_cycles": 2,
+    "seed": 42,
+    "resume": null,
+    "run_name": "reduced_h"
+  },
+  "test_puzzles": 3200,
+  "cell_accuracy": 39.42,
+  "exact_accuracy": 0.0,
+  "q_halt_accuracy": 100.0,
+  "avg_steps": 16.0,
+  "avg_q_predicted_steps": 16.0,
+  "early_halt_pct": 0.0,
+  "avg_lm_loss": 1.9171,
+  "eval_time_sec": 18.43
+}
