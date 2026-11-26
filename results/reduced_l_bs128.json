@@ -1,0 +1,30 @@
+{
+  "checkpoint": "checkpoints/reduced_l_bs128_step_5000.pt",
+  "step": 5000,
+  "h_cycles": 2,
+  "l_cycles": 1,
+  "h_layers": 4,
+  "l_layers": 4,
+  "hidden_size": 512,
+  "halt_max_steps": 16,
+  "train_args": {
+    "steps": 5000,
+    "batch_size": 128,
+    "save_every": 5000,
+    "warmup_steps": 200,
+    "h_cycles": 2,
+    "l_cycles": 1,
+    "seed": 42,
+    "resume": null,
+    "run_name": "reduced_l_bs128"
+  },
+  "test_puzzles": 3200,
+  "cell_accuracy": 59.34,
+  "exact_accuracy": 1.25,
+  "q_halt_accuracy": 96.72,
+  "avg_steps": 16.0,
+  "avg_q_predicted_steps": 15.98,
+  "early_halt_pct": 0.16,
+  "avg_lm_loss": 1.3897,
+  "eval_time_sec": 24.89
+}

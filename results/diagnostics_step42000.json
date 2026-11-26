@@ -1,0 +1,187 @@
+{
+  "checkpoint": "checkpoints/baseline_bs128_step_42000.pt",
+  "step": 42000,
+  "test_puzzles": 3200,
+  "act_trajectory": [
+    {
+      "act_step": 1,
+      "cell_acc_pct": 63.84,
+      "blank_acc_pct": 47.47,
+      "exact_acc_pct": 0.09,
+      "would_halt_pct": 0.0
+    },
+    {
+      "act_step": 2,
+      "cell_acc_pct": 67.09,
+      "blank_acc_pct": 52.2,
+      "exact_acc_pct": 2.56,
+      "would_halt_pct": 0.41
+    },
+    {
+      "act_step": 3,
+      "cell_acc_pct": 67.95,
+      "blank_acc_pct": 53.44,
+      "exact_acc_pct": 2.94,
+      "would_halt_pct": 2.81
+    },
+    {
+      "act_step": 4,
+      "cell_acc_pct": 68.4,
+      "blank_acc_pct": 54.1,
+      "exact_acc_pct": 2.97,
+      "would_halt_pct": 2.94
+    },
+    {
+      "act_step": 5,
+      "cell_acc_pct": 68.71,
+      "blank_acc_pct": 54.54,
+      "exact_acc_pct": 3.31,
+      "would_halt_pct": 2.94
+    },
+    {
+      "act_step": 6,
+      "cell_acc_pct": 68.9,
+      "blank_acc_pct": 54.82,
+      "exact_acc_pct": 4.12,
+      "would_halt_pct": 3.03
+    },
+    {
+      "act_step": 7,
+      "cell_acc_pct": 69.03,
+      "blank_acc_pct": 55.01,
+      "exact_acc_pct": 5.25,
+      "would_halt_pct": 3.44
+    },
+    {
+      "act_step": 8,
+      "cell_acc_pct": 69.09,
+      "blank_acc_pct": 55.11,
+      "exact_acc_pct": 6.16,
+      "would_halt_pct": 4.28
+    },
+    {
+      "act_step": 9,
+      "cell_acc_pct": 69.15,
+      "blank_acc_pct": 55.19,
+      "exact_acc_pct": 6.81,
+      "would_halt_pct": 5.25
+    },
+    {
+      "act_step": 10,
+      "cell_acc_pct": 69.21,
+      "blank_acc_pct": 55.28,
+      "exact_acc_pct": 7.31,
+      "would_halt_pct": 6.12
+    },
+    {
+      "act_step": 11,
+      "cell_acc_pct": 69.25,
+      "blank_acc_pct": 55.33,
+      "exact_acc_pct": 8.03,
+      "would_halt_pct": 6.72
+    },
+    {
+      "act_step": 12,
+      "cell_acc_pct": 69.27,
+      "blank_acc_pct": 55.37,
+      "exact_acc_pct": 8.66,
+      "would_halt_pct": 7.34
+    },
+    {
+      "act_step": 13,
+      "cell_acc_pct": 69.28,
+      "blank_acc_pct": 55.37,
+      "exact_acc_pct": 9.06,
+      "would_halt_pct": 8.0
+    },
+    {
+      "act_step": 14,
+      "cell_acc_pct": 69.27,
+      "blank_acc_pct": 55.36,
+      "exact_acc_pct": 9.28,
+      "would_halt_pct": 8.5
+    },
+    {
+      "act_step": 15,
+      "cell_acc_pct": 69.27,
+      "blank_acc_pct": 55.36,
+      "exact_acc_pct": 9.56,
+      "would_halt_pct": 9.03
+    },
+    {
+      "act_step": 16,
+      "cell_acc_pct": 69.27,
+      "blank_acc_pct": 55.36,
+      "exact_acc_pct": 9.72,
+      "would_halt_pct": 9.38
+    }
+  ],
+  "difficulty_breakdown": {
+    "<=22 clues": {
+      "solved": 0,
+      "total": 119,
+      "exact_acc_pct": 0.0
+    },
+    "23-25 clues": {
+      "solved": 99,
+      "total": 1672,
+      "exact_acc_pct": 5.92
+    },
+    "26-28 clues": {
+      "solved": 117,
+      "total": 1313,
+      "exact_acc_pct": 8.91
+    },
+    ">=29 clues": {
+      "solved": 95,
+      "total": 96,
+      "exact_acc_pct": 98.96
+    }
+  },
+  "q_margin_solved_mean": 0.3442,
+  "q_margin_unsolved_mean": -7.4012,
+  "solved_count": 311,
+  "unsolved_count": 2889,
+  "solved_examples": [
+    {
+      "batch_index": 0,
+      "item_index": 10,
+      "clues": 24,
+      "q_margin": 0.4688,
+      "valid_sudoku": true,
+      "input_grid": ". . . | . . 9 | . . .\n8 . . | . . . | . . 3\n9 5 . | 7 4 . | . . .\n------+-------+------\n1 . 7 | . 6 . | 4 . .\n. . . | . . . | . 8 .\n. . 6 | 2 . . | . . 5\n------+-------+------\n2 . . | . 9 . | . . .\n. . 5 | . . 6 | 1 . 4\n. . 8 | . 3 7 | . . .",
+      "pred_grid": "7 6 2 | 3 8 9 | 5 4 1\n8 1 4 | 6 5 2 | 7 9 3\n9 5 3 | 7 4 1 | 8 2 6\n------+-------+------\n1 8 7 | 9 6 5 | 4 3 2\n5 2 9 | 4 1 3 | 6 8 7\n4 3 6 | 2 7 8 | 9 1 5\n------+-------+------\n2 7 1 | 5 9 4 | 3 6 8\n3 9 5 | 8 2 6 | 1 7 4\n6 4 8 | 1 3 7 | 2 5 9",
+      "label_grid": "7 6 2 | 3 8 9 | 5 4 1\n8 1 4 | 6 5 2 | 7 9 3\n9 5 3 | 7 4 1 | 8 2 6\n------+-------+------\n1 8 7 | 9 6 5 | 4 3 2\n5 2 9 | 4 1 3 | 6 8 7\n4 3 6 | 2 7 8 | 9 1 5\n------+-------+------\n2 7 1 | 5 9 4 | 3 6 8\n3 9 5 | 8 2 6 | 1 7 4\n6 4 8 | 1 3 7 | 2 5 9"
+    },
+    {
+      "batch_index": 0,
+      "item_index": 12,
+      "clues": 35,
+      "q_margin": 0.6875,
+      "valid_sudoku": true,
+      "input_grid": "2 . . | . 7 . | . . .\n. 4 3 | 9 2 . | . 8 .\n9 . 8 | 3 . . | . . 5\n------+-------+------\n. 6 . | 1 . 9 | . . .\n5 . . | . . 2 | . 7 8\n3 9 . | . . 8 | 4 . 6\n------+-------+------\n. . 6 | 5 . . | . . 1\n7 . . | . 6 . | 3 . 4\n. 2 5 | 4 . . | 7 . 9",
+      "pred_grid": "2 5 1 | 8 7 4 | 6 9 3\n6 4 3 | 9 2 5 | 1 8 7\n9 7 8 | 3 1 6 | 2 4 5\n------+-------+------\n8 6 7 | 1 4 9 | 5 3 2\n5 1 4 | 6 3 2 | 9 7 8\n3 9 2 | 7 5 8 | 4 1 6\n------+-------+------\n4 3 6 | 5 9 7 | 8 2 1\n7 8 9 | 2 6 1 | 3 5 4\n1 2 5 | 4 8 3 | 7 6 9",
+      "label_grid": "2 5 1 | 8 7 4 | 6 9 3\n6 4 3 | 9 2 5 | 1 8 7\n9 7 8 | 3 1 6 | 2 4 5\n------+-------+------\n8 6 7 | 1 4 9 | 5 3 2\n5 1 4 | 6 3 2 | 9 7 8\n3 9 2 | 7 5 8 | 4 1 6\n------+-------+------\n4 3 6 | 5 9 7 | 8 2 1\n7 8 9 | 2 6 1 | 3 5 4\n1 2 5 | 4 8 3 | 7 6 9"
+    },
+    {
+      "batch_index": 0,
+      "item_index": 21,
+      "clues": 24,
+      "q_margin": -2.0645,
+      "valid_sudoku": true,
+      "input_grid": ". . 8 | . 2 . | . 1 .\n. 2 . | . . . | . 7 .\n7 . . | 8 . . | 6 . .\n------+-------+------\n. 1 . | . . . | . . 5\n3 . . | 4 . . | . . .\n. . . | 6 9 . | 1 . .\n------+-------+------\n. . 6 | 1 3 . | . . .\n5 . . | . . 4 | . 8 2\n. 4 . | . . 5 | . . .",
+      "pred_grid": "4 6 8 | 7 2 9 | 5 1 3\n1 2 3 | 5 4 6 | 9 7 8\n7 9 5 | 8 1 3 | 6 2 4\n------+-------+------\n6 1 9 | 3 7 8 | 2 4 5\n3 7 2 | 4 5 1 | 8 9 6\n8 5 4 | 6 9 2 | 1 3 7\n------+-------+------\n2 8 6 | 1 3 7 | 4 5 9\n5 3 1 | 9 6 4 | 7 8 2\n9 4 7 | 2 8 5 | 3 6 1",
+      "label_grid": "4 6 8 | 7 2 9 | 5 1 3\n1 2 3 | 5 4 6 | 9 7 8\n7 9 5 | 8 1 3 | 6 2 4\n------+-------+------\n6 1 9 | 3 7 8 | 2 4 5\n3 7 2 | 4 5 1 | 8 9 6\n8 5 4 | 6 9 2 | 1 3 7\n------+-------+------\n2 8 6 | 1 3 7 | 4 5 9\n5 3 1 | 9 6 4 | 7 8 2\n9 4 7 | 2 8 5 | 3 6 1"
+    },
+    {
+      "batch_index": 1,
+      "item_index": 9,
+      "clues": 25,
+      "q_margin": 0.1875,
+      "valid_sudoku": true,
+      "input_grid": ". . . | . 7 3 | . . .\n. . . | 1 9 . | . . 7\n. 8 . | . . . | . . .\n------+-------+------\n. . 1 | 5 6 . | . 3 .\n9 . . | . . . | 4 . .\n8 . . | . . . | 9 6 .\n------+-------+------\n6 . . | . 8 2 | 5 1 .\n. . . | . 1 . | 2 . .\n. 4 . | 7 . . | 6 . .",
+      "pred_grid": "2 1 9 | 6 7 3 | 8 4 5\n5 6 4 | 1 9 8 | 3 2 7\n7 8 3 | 2 5 4 | 1 9 6\n------+-------+------\n4 2 1 | 5 6 9 | 7 3 8\n9 3 6 | 8 2 7 | 4 5 1\n8 7 5 | 3 4 1 | 9 6 2\n------+-------+------\n6 9 7 | 4 8 2 | 5 1 3\n3 5 8 | 9 1 6 | 2 7 4\n1 4 2 | 7 3 5 | 6 8 9",
+      "label_grid": "2 1 9 | 6 7 3 | 8 4 5\n5 6 4 | 1 9 8 | 3 2 7\n7 8 3 | 2 5 4 | 1 9 6\n------+-------+------\n4 2 1 | 5 6 9 | 7 3 8\n9 3 6 | 8 2 7 | 4 5 1\n8 7 5 | 3 4 1 | 9 6 2\n------+-------+------\n6 9 7 | 4 8 2 | 5 1 3\n3 5 8 | 9 1 6 | 2 7 4\n1 4 2 | 7 3 5 | 6 8 9"
+    }
+  ]
+}

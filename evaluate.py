@@ -87,16 +87,22 @@ def main():
     # Model
     # --------------------------------------------------
 
+    loss_type = checkpoint.get("loss_type", "stablemax_cross_entropy")
+
     base_model = HierarchicalReasoningModel_ACTV1(
         config.model_dump()
     ).to(device)
 
     model = ACTLossHead(
         base_model,
-        loss_type="stablemax_cross_entropy"
+        loss_type=loss_type
     ).to(device)
 
-    model.load_state_dict(checkpoint["model"])
+    state_dict = {
+        k.removeprefix("_orig_mod."): v
+        for k, v in checkpoint["model"].items()
+    }
+    model.load_state_dict(state_dict)
     model.eval()
 
     step_info = checkpoint.get("step", "unknown")
@@ -224,7 +230,7 @@ def main():
     print("\n========== TEST RESULTS ==========")
     print("Checkpoint:", args.checkpoint)
     print("Training step:", step_info)
-    print(f"Config: H_cycles={config.H_cycles}, L_cycles={config.L_cycles}")
+    print(f"Config: H_cycles={config.H_cycles}, L_cycles={config.L_cycles}, pos_encodings={config.pos_encodings}, loss_type={loss_type}")
     print("Test puzzles:", int(count))
     print(f"Cell accuracy: {cell_acc:.2f}%")
     print(f"Exact puzzle accuracy: {exact_acc:.2f}%")
@@ -243,6 +249,8 @@ def main():
         "l_layers": config.L_layers,
         "hidden_size": config.hidden_size,
         "halt_max_steps": config.halt_max_steps,
+        "pos_encodings": config.pos_encodings,
+        "loss_type": loss_type,
         "train_args": train_args,
         "test_puzzles": int(count),
         "cell_accuracy": round(cell_acc, 2),
